@@ -1,34 +1,16 @@
-Educational Use License
+MIT License
 
 Copyright (c) 2025 Jose Mejias
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
-in the Software for educational and development purposes, subject to the 
-following conditions:
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
-
-EDUCATIONAL AND SAFETY REQUIREMENTS:
-
-1. This software is intended for educational purposes and must not be used in 
-   commercial operations without proper licensing and safety certifications.
-
-2. Users must comply with all local aviation regulations and safety guidelines
-   when operating drones with this software.
-
-3. The software must be thoroughly tested in safe, controlled environments 
-   before any real-world use.
-
-4. Users are responsible for obtaining all necessary permissions, licenses, 
-   and certifications required for drone operations in their jurisdiction.
-
-5. This software must not be used in any manner that violates DJI's terms of
-   service or applicable drone regulations.
-
-6. Any modifications or derivatives of this software must maintain these same
-   safety requirements and educational use restrictions.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -38,18 +20,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-DISCLAIMER OF LIABILITY:
+---
 
-THE USE OF THIS SOFTWARE FOR DRONE OPERATIONS CARRIES INHERENT RISKS. USERS
-ASSUME ALL RESPONSIBILITY FOR SAFE OPERATION AND COMPLIANCE WITH APPLICABLE
-LAWS AND REGULATIONS. THE AUTHORS AND CONTRIBUTORS ARE NOT LIABLE FOR ANY
-ACCIDENTS, DAMAGE, OR LEGAL VIOLATIONS RESULTING FROM THE USE OF THIS SOFTWARE.
-
-DRONE SAFETY REMINDER:
-
-- Always maintain visual line of sight with your drone
-- Check weather conditions before flight
-- Ensure adequate battery levels and GPS signal strength  
-- Respect no-fly zones and airspace restrictions
-- Follow manufacturer safety guidelines
-- Never fly over people or private property without permission
+SAFETY NOTICE:
+This software is for personal development and education. Always follow local 
+drone regulations and safety guidelines. The author is not responsible for 
+any accidents or violations resulting from use of this software.
