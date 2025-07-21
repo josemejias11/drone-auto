@@ -20,7 +20,7 @@ let package = Package(
         .target(
             name: "DroneAutoApp",
             dependencies: [],
-            path: "Source"
+            path: "DroneAutoApp/Source"
         ),
     ]
 )

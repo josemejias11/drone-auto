@@ -1,22 +1,25 @@
-# 🚁 DJI Drone Automation App
+# 🚁 Personal Drone Development Platform
 
-[![iOS](https://img.shields.io/badge/iOS-13.0+-blue.svg)](https://developer.apple.com/ios/)
+[![iOS](https://img.shields.io/badge/iPad_Pro_11"_M2-Compatible-blue.svg)](https://www.apple.com/ipad-pro/)
 [![Swift](https://img.shields.io/badge/Swift-5.8+-orange.svg)](https://swift.org/)
-[![DJI SDK](https://img.shields.io/badge/DJI_SDK-4.16+-red.svg)](https://developer.dji.com/)
-[![License](https://img.shields.io/badge/License-Educational-green.svg)](LICENSE)
+[![DJI](https://img.shields.io/badge/DJI_Mavic_2-Optimized-red.svg)](https://www.dji.com/mavic-2)
+[![Costa Rica](https://img.shields.io/badge/Costa_Rica-Compliant-green.svg)](LICENSE)
 
-A comprehensive iOS application for automating DJI drone flights using waypoint missions. Built with modern iOS architecture patterns and comprehensive safety features.
+**Jose's personal drone automation development environment** - Build, test, and deploy custom flight functionalities with iPad Pro 11" M2 and DJI Mavic 2 Classic.
 
-## 🎯 Features
+## 🎯 Personal Development Goals
 
-- ✈️ **Autonomous Flight Control**: Create and execute waypoint missions
-- 📡 **Real-time Monitoring**: Live status updates for battery, GPS, altitude
-- 🛡️ **Safety Checks**: Comprehensive pre-flight validation
-- 🎯 **Mission Management**: Upload, start, pause, resume, and stop missions
-- 📱 **Modern UI**: Clean, intuitive interface for mission control
-- 🔄 **Real-time Updates**: Delegate-based status monitoring
-- 📝 **Professional Logging**: Multi-level logging system
-- 🛡️ **Error Handling**: Comprehensive error management
+### 🧪 **Experimentation & Testing**
+- **Rapid Prototyping**: Develop custom flight algorithms directly on iPad
+- **Field Testing**: Deploy and test missions with real Mavic 2 hardware
+- **Iterative Development**: Quick code → test → refine cycles
+- **Personal Automation**: Custom solutions for specific use cases
+
+### � **Personal Use Cases**
+- **Property Surveying**: Automated boundary and area mapping
+- **Photography Projects**: Custom camera control and positioning
+- **Routine Inspections**: Automated monitoring flights
+- **Learning Platform**: Hands-on drone programming education
 
 ## Project Structure
 
@@ -44,21 +47,19 @@ DroneAutoApp/
 └── Package.swift                      # Swift Package Manager manifest
 ```
 
-## 🚀 Quick Start
+## �️ **Hardware Setup**
 
-### Clone the Repository
+### **Primary Development Stack**
+- **📱 iPad Pro 11" M2**: Primary development device with M2 chip optimization
+- **🚁 DJI Mavic 2 Classic**: Target drone for testing and deployment
+- **🌍 Location**: Costa Rica (regulations compliant)
+- **💻 Development**: Swift + DJI Mobile SDK on iPad
 
-```bash
-git clone https://github.com/josemejias11/drone-auto.git
-cd drone-auto
-```
-
-### Prerequisites
-
-- macOS 12.0+ with Xcode 14.0+
-- iOS 13.0+ target device (DJI SDK requires physical device)
-- DJI Developer Account ([Register here](https://developer.dji.com))
-- Compatible DJI Drone (Mavic series, Phantom series, etc.)
+### **Why This Setup?**
+- **Portability**: Develop and test in the field with iPad Pro
+- **Performance**: M2 chip handles real-time flight monitoring
+- **Reliability**: Mavic 2 proven platform for development
+- **Flexibility**: Code anywhere, test immediately
 
 ## 📋 Setup Instructions
 
