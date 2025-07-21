@@ -8,8 +8,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        // Initialize DJI SDK
-        DJISDKManager.registerApp(withDelegate: self)
+        // Initialize DJI SDK with your App Key
+        // TODO: Replace "YOUR_APP_KEY_HERE" with your actual DJI App Key
+        DJISDKManager.registerApp(withAppKey: "YOUR_APP_KEY_HERE", withDelegate: self)
         
         return true
     }
