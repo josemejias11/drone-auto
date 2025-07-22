@@ -1,4 +1,5 @@
 import UIKit
+import CoreLocation
 
 class MainViewController: UIViewController {
     
@@ -20,8 +21,15 @@ class MainViewController: UIViewController {
     private let pauseButton = UIButton(type: .system)
     private let stopButton = UIButton(type: .system)
     
+    // File operation buttons
+    private let saveMissionButton = UIButton(type: .system)
+    private let loadMissionButton = UIButton(type: .system)
+    private let exportMissionButton = UIButton(type: .system)
+    private let createSampleButton = UIButton(type: .system)
+    
     private let statusStackView = UIStackView()
     private let buttonsStackView = UIStackView()
+    private let fileOperationsStackView = UIStackView()
     
     // MARK: - Properties
     private let droneService = DroneService.shared
@@ -82,6 +90,12 @@ class MainViewController: UIViewController {
         setupButton(pauseButton, title: "Pause Mission", action: #selector(pauseButtonTapped))
         setupButton(stopButton, title: "Stop Mission", action: #selector(stopButtonTapped))
         
+        // Configure file operation buttons
+        setupButton(saveMissionButton, title: "Save to Files", action: #selector(saveMissionButtonTapped))
+        setupButton(loadMissionButton, title: "Load from Files", action: #selector(loadMissionButtonTapped))
+        setupButton(exportMissionButton, title: "Export Mission", action: #selector(exportMissionButtonTapped))
+        setupButton(createSampleButton, title: "Create Sample", action: #selector(createSampleButtonTapped))
+        
         // Configure stack views
         statusStackView.axis = .vertical
         statusStackView.spacing = 8
@@ -90,6 +104,10 @@ class MainViewController: UIViewController {
         buttonsStackView.axis = .vertical
         buttonsStackView.spacing = 12
         buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        fileOperationsStackView.axis = .vertical
+        fileOperationsStackView.spacing = 12
+        fileOperationsStackView.translatesAutoresizingMaskIntoConstraints = false
         
         // Add views to hierarchy
         view.addSubview(scrollView)
@@ -106,6 +124,11 @@ class MainViewController: UIViewController {
             buttonsStackView.addArrangedSubview($0)
         }
         contentView.addSubview(buttonsStackView)
+        
+        [saveMissionButton, loadMissionButton, exportMissionButton, createSampleButton].forEach {
+            fileOperationsStackView.addArrangedSubview($0)
+        }
+        contentView.addSubview(fileOperationsStackView)
     }
     
     private func setupButton(_ button: UIButton, title: String, action: Selector) {
@@ -147,14 +170,23 @@ class MainViewController: UIViewController {
             buttonsStackView.topAnchor.constraint(equalTo: statusStackView.bottomAnchor, constant: 40),
             buttonsStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             buttonsStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            buttonsStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
+            
+            // File operations stack
+            fileOperationsStackView.topAnchor.constraint(equalTo: buttonsStackView.bottomAnchor, constant: 30),
+            fileOperationsStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            fileOperationsStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            fileOperationsStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
             
             // Button heights
             connectButton.heightAnchor.constraint(equalToConstant: 50),
             uploadMissionButton.heightAnchor.constraint(equalToConstant: 50),
             startMissionButton.heightAnchor.constraint(equalToConstant: 50),
             pauseButton.heightAnchor.constraint(equalToConstant: 50),
-            stopButton.heightAnchor.constraint(equalToConstant: 50)
+            stopButton.heightAnchor.constraint(equalToConstant: 50),
+            saveMissionButton.heightAnchor.constraint(equalToConstant: 50),
+            loadMissionButton.heightAnchor.constraint(equalToConstant: 50),
+            exportMissionButton.heightAnchor.constraint(equalToConstant: 50),
+            createSampleButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
     
@@ -359,7 +391,241 @@ extension MainViewController: DroneStatusDelegate {
                 gpsSignalLabel.textColor = .systemOrange
             default:
                 gpsSignalLabel.textColor = .systemGreen
+        }
+    }
+    
+    // MARK: - File Operation Actions
+    
+    @objc private func saveMissionButtonTapped() {
+        guard let flightPlan = currentFlightPlan else {
+            showAlert(title: "No Mission", message: "Please create or load a mission first")
+            return
+        }
+        
+        let jsonMission = flightPlan.toJSONMission(
+            name: "My Custom Mission \(Date().formatted(.dateTime.month().day().hour().minute()))",
+            description: "Mission saved from DroneAuto app",
+            tags: ["custom", "saved", "droneauto"]
+        )
+        
+        MissionFileManager.shared.saveMission(jsonMission) { [weak self] result in
+            switch result {
+            case .success(let url):
+                self?.showAlert(
+                    title: "Mission Saved",
+                    message: "Mission saved successfully!\n\nLocation: \(MissionFileManager.shared.getFilesAppPath())\n\nYou can access it in the Files app."
+                )
+            case .failure(let error):
+                self?.showAlert(title: "Save Failed", message: error.localizedDescription)
             }
+        }
+    }
+    
+    @objc private func loadMissionButtonTapped() {
+        MissionFileManager.shared.importMission(from: self) { [weak self] result in
+            switch result {
+            case .success(let jsonMission):
+                // Use the enhanced JSON importer from PersonalMissionManager
+                let importResult = PersonalMissionManager.shared.importJSONMission(from: try! JSONEncoder().encode(jsonMission))
+                
+                switch importResult {
+                case .success(let flightPlan):
+                    self?.currentFlightPlan = flightPlan
+                    self?.showAlert(
+                        title: "Mission Loaded Successfully",
+                        message: """
+                        Mission: '\(jsonMission.metadata.name)'
+                        
+                        • \(jsonMission.waypoints.count) waypoints loaded
+                        • Author: \(jsonMission.metadata.author)
+                        • Tags: \(jsonMission.metadata.tags.joined(separator: ", "))
+                        
+                        Mission has passed all safety validations.
+                        """
+                    )
+                case .failure(let importError):
+                    self?.showAlert(
+                        title: "Mission Validation Failed",
+                        message: importError.localizedDescription
+                    )
+                }
+                
+            case .failure(let error):
+                if case MissionFileError.importCancelled = error {
+                    // User cancelled, no need to show error
+                    return
+                }
+                self?.showAlert(title: "Load Failed", message: error.localizedDescription)
+            }
+        }
+    }
+    
+    @objc private func exportMissionButtonTapped() {
+        guard let flightPlan = currentFlightPlan else {
+            showAlert(title: "No Mission", message: "Please create or load a mission first")
+            return
+        }
+        
+        let jsonMission = flightPlan.toJSONMission(
+            name: "Exported Mission \(Date().formatted(.dateTime.month().day()))",
+            description: "Mission exported from DroneAuto app for sharing",
+            tags: ["exported", "shared", "droneauto"]
+        )
+        
+        MissionFileManager.shared.exportMission(jsonMission, from: self)
+    }
+    
+    @objc private func createSampleButtonTapped() {
+        let actionSheet = UIAlertController(title: "Create Sample Mission", 
+                                          message: "Choose a mission template", 
+                                          preferredStyle: .actionSheet)
+        
+        actionSheet.addAction(UIAlertAction(title: "Basic Test Mission", style: .default) { [weak self] _ in
+            let jsonMission = PersonalMissionManager.shared.createBasicTestJSONMission()
+            self?.currentFlightPlan = jsonMission.toFlightPlan()
+            self?.showAlert(title: "Sample Created", message: "Basic test mission with 4 waypoints created!")
+        })
+        
+        actionSheet.addAction(UIAlertAction(title: "Grid Survey Mission", style: .default) { [weak self] _ in
+            let jsonMission = PersonalMissionManager.shared.createGridSurveyJSONMission()
+            self?.currentFlightPlan = jsonMission.toFlightPlan()
+            self?.showAlert(title: "Sample Created", message: "Grid survey mission (3x3) created!")
+        })
+        
+        actionSheet.addAction(UIAlertAction(title: "Perimeter Inspection", style: .default) { [weak self] _ in
+            let corners = [
+                CLLocationCoordinate2D(latitude: 10.323520, longitude: -84.430511),
+                CLLocationCoordinate2D(latitude: 10.324520, longitude: -84.430511),
+                CLLocationCoordinate2D(latitude: 10.324520, longitude: -84.431511),
+                CLLocationCoordinate2D(latitude: 10.323520, longitude: -84.431511)
+            ]
+            let jsonMission = PersonalMissionManager.shared.createPerimeterJSONMission(corners: corners)
+            self?.currentFlightPlan = jsonMission.toFlightPlan()
+            self?.showAlert(title: "Sample Created", message: "Perimeter inspection mission created!")
+        })
+        
+        actionSheet.addAction(UIAlertAction(title: "Test JSON Import", style: .default) { [weak self] _ in
+            self?.testJSONImport()
+        })
+        
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        if let popover = actionSheet.popoverPresentationController {
+            popover.sourceView = createSampleButton
+            popover.sourceRect = createSampleButton.bounds
+        }
+        
+        present(actionSheet, animated: true)
+    }
+    
+    // MARK: - Test Methods
+    
+    private func testJSONImport() {
+        // Test with the sample JSON file
+        let sampleJSONString = """
+        {
+          "metadata": {
+            "author": "Jose",
+            "createdDate": "2025-07-22T12:00:00Z",
+            "description": "Test mission for JSON import validation",
+            "modifiedDate": "2025-07-22T12:00:00Z",
+            "name": "JSON Import Test",
+            "tags": ["test", "import", "validation"],
+            "version": "1.0"
+          },
+          "safetyLimits": {
+            "geofenceCenter": {
+              "latitude": 10.32352,
+              "longitude": -84.430511
+            },
+            "geofenceRadius": 300.0,
+            "maxAltitude": 100.0,
+            "maxDistanceFromHome": 250.0,
+            "minBatteryLevel": 25,
+            "minGPSSignalLevel": 4
+          },
+          "settings": {
+            "autoFlightSpeed": 6.0,
+            "exitMissionOnRCSignalLost": true,
+            "finishedAction": "goHome",
+            "gotoFirstWaypointMode": "safely",
+            "headingMode": "auto",
+            "maxFlightSpeed": 12.0,
+            "repeatTimes": 1
+          },
+          "waypoints": [
+            {
+              "actionRepeatTimes": 1,
+              "actionTimeoutInSeconds": 60.0,
+              "actions": [
+                {
+                  "parameters": null,
+                  "type": "takePhoto"
+                }
+              ],
+              "altitude": 75.0,
+              "coordinate": {
+                "latitude": 10.323520,
+                "longitude": -84.430511
+              },
+              "cornerRadiusInMeters": 0.2,
+              "gimbalPitch": -45.0,
+              "heading": null,
+              "speed": 6.0,
+              "turnMode": "clockwise"
+            },
+            {
+              "actionRepeatTimes": 1,
+              "actionTimeoutInSeconds": 60.0,
+              "actions": [
+                {
+                  "parameters": null,
+                  "type": "takePhoto"
+                }
+              ],
+              "altitude": 75.0,
+              "coordinate": {
+                "latitude": 10.324020,
+                "longitude": -84.430511
+              },
+              "cornerRadiusInMeters": 0.2,
+              "gimbalPitch": -45.0,
+              "heading": null,
+              "speed": 6.0,
+              "turnMode": "clockwise"
+            }
+          ]
+        }
+        """
+        
+        // Test the JSON import system
+        let importResult = PersonalMissionManager.shared.importJSONMission(from: sampleJSONString)
+        
+        switch importResult {
+        case .success(let flightPlan):
+            self.currentFlightPlan = flightPlan
+            showAlert(
+                title: "JSON Import Test Successful",
+                message: """
+                ✅ JSON parsing: Success
+                ✅ Validation: Passed
+                ✅ FlightPlan conversion: Success
+                
+                Mission loaded with \(flightPlan.waypoints.count) waypoints.
+                All safety checks passed!
+                """
+            )
+        case .failure(let error):
+            showAlert(
+                title: "JSON Import Test Failed",
+                message: """
+                ❌ Import failed with error:
+                
+                \(error.localizedDescription)
+                
+                Please check the JSON format and validation rules.
+                """
+            )
         }
     }
 }

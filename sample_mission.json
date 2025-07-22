@@ -1,0 +1,119 @@
+{
+  "metadata": {
+    "author": "Jose",
+    "createdDate": "2025-07-22T12:00:00Z",
+    "description": "Sample mission demonstrating the JSON format for waypoint missions",
+    "modifiedDate": "2025-07-22T12:00:00Z",
+    "name": "Sample Property Survey",
+    "tags": ["sample", "survey", "property", "demo"],
+    "version": "1.0"
+  },
+  "safetyLimits": {
+    "geofenceCenter": {
+      "latitude": 10.32352,
+      "longitude": -84.430511
+    },
+    "geofenceRadius": 400.0,
+    "maxAltitude": 120.0,
+    "maxDistanceFromHome": 350.0,
+    "minBatteryLevel": 20,
+    "minGPSSignalLevel": 3
+  },
+  "settings": {
+    "autoFlightSpeed": 8.0,
+    "exitMissionOnRCSignalLost": true,
+    "finishedAction": "goHome",
+    "gotoFirstWaypointMode": "safely",
+    "headingMode": "auto",
+    "maxFlightSpeed": 15.0,
+    "repeatTimes": 1
+  },
+  "waypoints": [
+    {
+      "actionRepeatTimes": 1,
+      "actionTimeoutInSeconds": 60.0,
+      "actions": [
+        {
+          "parameters": null,
+          "type": "takePhoto"
+        }
+      ],
+      "altitude": 80.0,
+      "coordinate": {
+        "latitude": 10.32252,
+        "longitude": -84.431011
+      },
+      "cornerRadiusInMeters": 0.2,
+      "gimbalPitch": -60.0,
+      "heading": null,
+      "speed": 8.0,
+      "turnMode": "clockwise"
+    },
+    {
+      "actionRepeatTimes": 1,
+      "actionTimeoutInSeconds": 60.0,
+      "actions": [
+        {
+          "parameters": null,
+          "type": "takePhoto"
+        }
+      ],
+      "altitude": 80.0,
+      "coordinate": {
+        "latitude": 10.32452,
+        "longitude": -84.431011
+      },
+      "cornerRadiusInMeters": 0.2,
+      "gimbalPitch": -60.0,
+      "heading": null,
+      "speed": 8.0,
+      "turnMode": "clockwise"
+    },
+    {
+      "actionRepeatTimes": 1,
+      "actionTimeoutInSeconds": 60.0,
+      "actions": [
+        {
+          "parameters": null,
+          "type": "takePhoto"
+        },
+        {
+          "parameters": {
+            "duration": "10"
+          },
+          "type": "startRecording"
+        }
+      ],
+      "altitude": 80.0,
+      "coordinate": {
+        "latitude": 10.32452,
+        "longitude": -84.430011
+      },
+      "cornerRadiusInMeters": 0.2,
+      "gimbalPitch": -90.0,
+      "heading": null,
+      "speed": 6.0,
+      "turnMode": "clockwise"
+    },
+    {
+      "actionRepeatTimes": 1,
+      "actionTimeoutInSeconds": 60.0,
+      "actions": [
+        {
+          "parameters": null,
+          "type": "takePhoto"
+        }
+      ],
+      "altitude": 80.0,
+      "coordinate": {
+        "latitude": 10.32252,
+        "longitude": -84.430011
+      },
+      "cornerRadiusInMeters": 0.2,
+      "gimbalPitch": -60.0,
+      "heading": null,
+      "speed": 8.0,
+      "turnMode": "clockwise"
+    }
+  ]
+}

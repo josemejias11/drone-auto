@@ -125,21 +125,56 @@ class DroneService: NSObject {
             return
         }
         
-        guard flightPlan.isValid else {
-            completion(.failure(DroneError.invalidFlightPlan))
+        // Use PersonalMissionManager to translate FlightPlan to DJI format
+        let translationResult = PersonalMissionManager.shared.translateToDJIMission(flightPlan)
+        
+        switch translationResult {
+        case .success(let djiMission):
+            missionOperator.uploadMission(djiMission) { error in
+                DispatchQueue.main.async {
+                    if let error = error {
+                        Logger.shared.error("DJI mission upload failed: \(error.localizedDescription)")
+                        completion(.failure(error))
+                    } else {
+                        Logger.shared.info("DJI mission uploaded successfully")
+                        completion(.success(()))
+                    }
+                }
+            }
+            
+        case .failure(let translationError):
+            Logger.shared.error("FlightPlan to DJI translation failed: \(translationError.localizedDescription)")
+            completion(.failure(translationError))
+        }
+    }
+    
+    /// Upload mission from JSON format
+    func uploadJSONMission(_ jsonMission: JSONMission, completion: @escaping (Result<Void, Error>) -> Void) {
+        guard let missionOperator = missionOperator else {
+            completion(.failure(DroneError.notConnected))
             return
         }
         
-        let mission = createDJIMission(from: flightPlan)
+        // Use PersonalMissionManager to translate JSON to DJI format
+        let translationResult = PersonalMissionManager.shared.createEnhancedDJIMission(from: jsonMission)
         
-        missionOperator.uploadMission(mission) { error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    completion(.failure(error))
-                } else {
-                    completion(.success(()))
+        switch translationResult {
+        case .success(let djiMission):
+            missionOperator.uploadMission(djiMission) { error in
+                DispatchQueue.main.async {
+                    if let error = error {
+                        Logger.shared.error("Enhanced DJI mission upload failed: \(error.localizedDescription)")
+                        completion(.failure(error))
+                    } else {
+                        Logger.shared.info("Enhanced DJI mission '\(jsonMission.metadata.name)' uploaded successfully")
+                        completion(.success(()))
+                    }
                 }
             }
+            
+        case .failure(let translationError):
+            Logger.shared.error("JSON to DJI translation failed: \(translationError.localizedDescription)")
+            completion(.failure(translationError))
         }
     }
     
@@ -244,53 +279,14 @@ class DroneService: NSObject {
     
     // MARK: - Helper Methods
     
-    private func createDJIMission(from flightPlan: FlightPlan) -> DJIMutableWaypointMission {
-        let mission = DJIMutableWaypointMission()
+    private func startStatusUpdates() {
+        // Start battery monitoring
+        aircraft?.battery?.delegate = self
         
-        mission.maxFlightSpeed = flightPlan.maxFlightSpeed
-        mission.autoFlightSpeed = flightPlan.autoFlightSpeed
+        // Start flight controller monitoring
+        aircraft?.flightController?.delegate = self
         
-        // Convert custom enums to DJI enums
-        switch flightPlan.finishedAction {
-        case .noAction:
-            mission.finishedAction = .noAction
-        case .goHome:
-            mission.finishedAction = .goHome
-        case .autoLand:
-            mission.finishedAction = .autoLand
-        case .goFirstWaypoint:
-            mission.finishedAction = .goFirstWaypoint
-        }
-        
-        switch flightPlan.headingMode {
-        case .auto:
-            mission.headingMode = .auto
-        case .usingInitialDirection:
-            mission.headingMode = .usingInitialDirection
-        case .controlByRemoteController:
-            mission.headingMode = .controlByRemoteController
-        case .usingWaypointHeading:
-            mission.headingMode = .usingWaypointHeading
-        }
-        
-        // Add waypoints
-        for waypoint in flightPlan.waypoints {
-            let djiWaypoint = DJIWaypoint(coordinate: waypoint.coordinate)
-            djiWaypoint.altitude = waypoint.altitude
-            
-            if let heading = waypoint.heading {
-                djiWaypoint.heading = heading
-            }
-            
-            if let gimbalPitch = waypoint.gimbalPitch {
-                let gimbalAction = DJIWaypointAction(actionType: .gimbalPitch, param: gimbalPitch)
-                djiWaypoint.add(gimbalAction)
-            }
-            
-            mission.add(djiWaypoint)
-        }
-        
-        return mission
+        Logger.shared.info("Started drone status monitoring")
     }
 }
 
