@@ -21,6 +21,11 @@ Packages/
 Package.pins
 Package.resolved
 
+# CocoaPods
+Pods/
+*.xcworkspace
+Podfile.lock
+
 # iOS
 *.app
 *.ipa
