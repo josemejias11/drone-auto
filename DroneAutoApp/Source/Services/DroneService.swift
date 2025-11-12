@@ -248,20 +248,28 @@ class DroneService: NSObject {
     }
     
     // MARK: - Status Updates
-    
+
     private func startStatusUpdates() {
+        // Start battery monitoring
+        aircraft?.battery?.delegate = self
+
+        // Start flight controller monitoring
+        aircraft?.flightController?.delegate = self
+
         // Update drone status every 2 seconds
         Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
             self?.updateDroneStatus()
         }
+
+        Logger.shared.info("Started drone status monitoring")
     }
-    
+
     private func updateDroneStatus() {
         guard let aircraft = aircraft else { return }
-        
+
         let flightController = aircraft.flightController
         let battery = aircraft.battery
-        
+
         let status = DroneStatus(
             isConnected: true,
             batteryLevel: battery?.chargeRemainingInPercent,
@@ -271,22 +279,10 @@ class DroneService: NSObject {
             isFlying: flightController?.state.isFlying ?? false,
             flightMode: flightController?.state.flightModeString
         )
-        
+
         DispatchQueue.main.async {
             self.delegate?.droneStatusDidUpdate(status)
         }
-    }
-    
-    // MARK: - Helper Methods
-    
-    private func startStatusUpdates() {
-        // Start battery monitoring
-        aircraft?.battery?.delegate = self
-        
-        // Start flight controller monitoring
-        aircraft?.flightController?.delegate = self
-        
-        Logger.shared.info("Started drone status monitoring")
     }
 }
 

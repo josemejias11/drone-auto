@@ -1173,8 +1173,26 @@ extension FlightPlan: Codable {
         try container.encode(waypoints, forKey: .waypoints)
         try container.encode(maxFlightSpeed, forKey: .maxFlightSpeed)
         try container.encode(autoFlightSpeed, forKey: .autoFlightSpeed)
-        try container.encode(finishedAction.rawValue, forKey: .finishedAction)
-        try container.encode(headingMode.rawValue, forKey: .headingMode)
+
+        // Convert enums to strings
+        let finishedActionString: String
+        switch finishedAction {
+        case .noAction: finishedActionString = "noAction"
+        case .goHome: finishedActionString = "goHome"
+        case .autoLand: finishedActionString = "autoLand"
+        case .goFirstWaypoint: finishedActionString = "goFirstWaypoint"
+        }
+
+        let headingModeString: String
+        switch headingMode {
+        case .auto: headingModeString = "auto"
+        case .usingInitialDirection: headingModeString = "usingInitialDirection"
+        case .controlByRemoteController: headingModeString = "controlByRemoteController"
+        case .usingWaypointHeading: headingModeString = "usingWaypointHeading"
+        }
+
+        try container.encode(finishedActionString, forKey: .finishedAction)
+        try container.encode(headingModeString, forKey: .headingMode)
     }
     
     init(from decoder: Decoder) throws {
@@ -1184,11 +1202,24 @@ extension FlightPlan: Codable {
         let autoFlightSpeed = try container.decode(Float.self, forKey: .autoFlightSpeed)
         let finishedActionRaw = try container.decode(String.self, forKey: .finishedAction)
         let headingModeRaw = try container.decode(String.self, forKey: .headingMode)
-        
-        // Convert string back to enums (simplified for example)
-        let finishedAction: FlightPlan.FinishedAction = finishedActionRaw == "goHome" ? .goHome : .noAction
-        let headingMode: FlightPlan.HeadingMode = headingModeRaw == "auto" ? .auto : .usingInitialDirection
-        
+
+        // Convert string back to enums
+        let finishedAction: FlightPlan.FinishedAction
+        switch finishedActionRaw.lowercased() {
+        case "gohome": finishedAction = .goHome
+        case "autoland": finishedAction = .autoLand
+        case "gofirstwaypoint": finishedAction = .goFirstWaypoint
+        default: finishedAction = .noAction
+        }
+
+        let headingMode: FlightPlan.HeadingMode
+        switch headingModeRaw.lowercased() {
+        case "usinginitialirection": headingMode = .usingInitialDirection
+        case "controlbyremotecontroller": headingMode = .controlByRemoteController
+        case "usingwaypointheading": headingMode = .usingWaypointHeading
+        default: headingMode = .auto
+        }
+
         self.init(
             waypoints: waypoints,
             maxFlightSpeed: maxFlightSpeed,

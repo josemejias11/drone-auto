@@ -391,6 +391,7 @@ extension MainViewController: DroneStatusDelegate {
                 gpsSignalLabel.textColor = .systemOrange
             default:
                 gpsSignalLabel.textColor = .systemGreen
+            }
         }
     }
     
