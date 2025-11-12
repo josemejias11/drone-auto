@@ -1,8 +1,8 @@
-# 🚁 Jose's Drone Development Workspace
+# Jose's Drone Development Workspace
 
 Personal development environment for custom drone flight automation using iPad Pro 11" M2 and DJI Mavic 2 Classic.
 
-## 🎯 Purpose
+## Purpose
 
 Build, test, and deploy custom flight functionalities for:
 - Property surveying and mapping
@@ -10,19 +10,19 @@ Build, test, and deploy custom flight functionalities for:
 - Routine inspection flights
 - Algorithm development and testing
 
-## 🛠️ Setup
+## Setup
 
 **Hardware:**
-- 📱 iPad Pro 11" M2 (development device)
-- 🚁 DJI Mavic 2 Classic (test drone)
-- 🌍 Costa Rica operations (compliant)
+-  iPad Pro 11" M2 (development device)
+-  DJI Mavic 2 Classic (test drone)
+-  Costa Rica operations (compliant)
 
 **Software:**
 - iOS app using DJI Mobile SDK
 - Swift development with safety-first approach
 - Real-time flight monitoring and control
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Development Environment
 ```bash
@@ -74,7 +74,7 @@ let perimeter = PersonalMissionManager.shared.createPerimeterMission(
 - **Multi-level Logging**: Development-friendly debugging with emoji indicators
 - **Smart Validation**: Comprehensive safety checks before every flight
 
-## 📁 Project Structure
+## Project Structure
 
 **Complete iOS Development Environment:**
 ```
@@ -105,7 +105,7 @@ DroneAutoApp/
 - ✅ **Hardware Optimization**: iPad Pro M2 ProMotion + Metal acceleration
 - ✅ **Safety Validation**: Costa Rica regulations + comprehensive pre-flight checks
 
-## 🧪 Development Workflow
+## Development Workflow
 
 **Rapid Development & Testing Cycle:**
 1. **Code**: Develop on iPad Pro M2 with intelligent autocomplete
@@ -129,17 +129,17 @@ Logger.shared.info("Mission validated successfully ✅")
 Logger.shared.debug("Generated \(mission.waypoints.count) waypoints 📍")
 ```
 
-## 🛡️ Safety Features
+## Safety Features
 
 **Multi-Layer Safety System:**
-- 🇨🇷 **Costa Rica Compliance**: Automatic 122m altitude enforcement
-- 🚁 **Mavic 2 Limits**: 8km range validation with 31-minute flight time tracking
-- 🔋 **Smart Battery**: 30% minimum with landing buffer calculations
-- 📡 **GPS Validation**: Level 4+ signal strength requirements
-- 🏠 **Auto Return-to-Home**: Triggered on critical errors or low battery
-- 📊 **Real-time Monitoring**: Live telemetry with immediate alerts
-- ⚠️ **Pre-flight Validation**: Comprehensive mission safety checks
-- 📱 **iPad Integration**: Hardware-optimized performance monitoring
+-  **Costa Rica Compliance**: Automatic 122m altitude enforcement
+-  **Mavic 2 Limits**: 8km range validation with 31-minute flight time tracking
+-  **Smart Battery**: 30% minimum with landing buffer calculations
+-  **GPS Validation**: Level 4+ signal strength requirements
+-  **Auto Return-to-Home**: Triggered on critical errors or low battery
+-  **Real-time Monitoring**: Live telemetry with immediate alerts
+-  **Pre-flight Validation**: Comprehensive mission safety checks
+-  **iPad Integration**: Hardware-optimized performance monitoring
 
 **Advanced Safety Features:**
 ```swift
@@ -149,12 +149,12 @@ let validationResult = PersonalMissionManager.shared.validateForPersonalSetup(mi
 // Costa Rica specific: 122m max altitude, no-fly zone awareness
 ```
 
-## 📖 Documentation
+## Documentation
 
 - **[DEVELOPMENT_GUIDE.md](DEVELOPMENT_GUIDE.md)**: Detailed development workflows and examples
 - **[LICENSE](LICENSE)**: Educational use terms and safety requirements
 
-## 🔧 Personal Configuration
+## Personal Configuration
 
 **Quick Customization Points:**
 ```swift
@@ -185,5 +185,3 @@ static let surveyOverlap: Double = 75.0 // Photo overlap percentage
 - Comprehensive mission persistence and sharing through Files app integration
 
 ---
-
-**Happy coding and safe flying! 🚁✨**
